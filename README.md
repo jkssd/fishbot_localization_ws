@@ -13,12 +13,11 @@
 chapt7_ws_localization/
 ├── src/
 │   ├── fishbot_description/    # 机器人 URDF / Gazebo 世界 / 控制器（差速、IMU、激光、GPS）
-│   ├── fishbot_navigation2/    # 地图 room + nav2_params.yaml（amcl / map_server）
 │   └── fishbot_localization/   # 定位整合包（本工程核心）
 │       ├── launch/navigation_localization.launch.py  # 整合 launch
 │       ├── config/ekf.yaml                  # 局部 EKF 配置
-│       ├── config/dual_ekf_navsat.yaml      # 备用：GPS 双 EKF + navsat 配置
 │       ├── config/rviz/navigation_ekf.rviz  # RViz 配置
+        ├── maps #地图文件与地图配置文件
 │       └── fishbot_localization/path_recorder.py  # 轨迹记录节点
 ```
 
@@ -37,7 +36,7 @@ source install/setup.bash
 ros2 launch fishbot_description gazebo_sim.launch.py
 
 # 终端 2：地图定位(AMCL) + EKF + 轨迹 + RViz2
-ros2 launch fishbot_localization navigation_localization.launch.py
+LIBGL_ALWAYS_SOFTWARE=1 ros2 launch fishbot_localization navigation_localization.launch.py
 
 # 终端 3：键盘控制机器人移动，观察地图上的轨迹
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
@@ -48,5 +47,3 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 - IMU 话题：`/imu`；里程计：`/odom`；激光：`/scan`；地图：`/map`；轨迹：`/robot_trajectory`。
 - 坐标系：`map -> odom -> base_footprint -> base_link`。
 - 差速控制器已关闭 `enable_odom_tf`，`odom -> base_footprint` 由 EKF 发布，避免 TF 冲突。
-
-> 备注：`dual_ekf_navsat.yaml` 是一套 GPS + 双 EKF + navsat 的全局定位方案（需要仿真 GPS 传感器），当前默认 launch 使用 AMCL 地图定位，未启用该文件。

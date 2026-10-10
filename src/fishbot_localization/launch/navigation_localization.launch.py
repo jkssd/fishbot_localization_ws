@@ -25,12 +25,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # ---------- 路径 ----------
-    fishbot_navigation_path = get_package_share_directory('fishbot_navigation2')
     fishbot_localization_path = get_package_share_directory('fishbot_localization')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
-    map_yaml_path = os.path.join(fishbot_navigation_path, 'maps', 'room.yaml')
-    nav2_param_path = os.path.join(fishbot_navigation_path, 'config', 'nav2_params.yaml')
+    map_yaml_path = os.path.join(fishbot_localization_path, 'maps', 'room.yaml')
+    nav2_param_path = os.path.join(fishbot_localization_path, 'config', 'nav2_params.yaml')
     ekf_param_path = os.path.join(fishbot_localization_path, 'config', 'ekf.yaml')
     rviz2_config_dir = os.path.join(
         fishbot_localization_path, 'config', 'rviz', 'navigation_ekf.rviz')

@@ -1,37 +1,38 @@
-### robot_localization 局部 EKF 配置
-### 融合 /odom（差速轮里程计）+ /imu（IMU），发布 odom -> base_footprint 与 /odometry/filtered。
-### 全局定位（map -> odom）由 AMCL 提供，二者配合得到 map -> base_footprint 完整链路。
-###
-### 15 个布尔值依次对应：x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az
 ekf_filter_node:
   ros__parameters:
     use_sim_time: true
     frequency: 30.0
     two_d_mode: true
-    publish_tf: true          # 发布 odom -> base_footprint
+    publish_tf: true
     publish_acceleration: false
+    transform_tolerance: 1.0          # 关键！增大容差，减少时间不同步导致的丢帧
 
     map_frame: map
     odom_frame: odom
     base_link_frame: base_footprint
-    world_frame: odom         # 局部融合，世界坐标系为 odom
+    world_frame: odom
 
-    # 轮式里程计：提供 x, y, yaw 以及 vx, vy, vyaw
+    # 轮式里程计：只融合速度，不融合位置
     odom0: /odom
-    odom0_config: [true,  true,  false,
-                   false, false, true,
-                   true,  true,  false,
-                   false, false, true,
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  false, false,   # 只融合 vx
+                   false, false, true,    # 只融合 vyaw
                    false, false, false]
     odom0_queue_size: 10
     odom0_nodelay: true
+    odom0_differential: false
+    odom0_relative: false
 
-    # IMU：提供 yaw 与 vyaw
+    # IMU：只融合角速度，不融合绝对yaw
     imu0: /imu
     imu0_config: [false, false, false,
-                  false, false, true,
+                  false, false, false,   # 不融合绝对yaw
                   false, false, false,
-                  false, false, true,
+                  false, false, true,    # 只融合 vyaw
                   false, false, false]
     imu0_queue_size: 10
-    imu0_nodelay: false
+    imu0_nodelay: true               # 仿真中建议改为true
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: true

@@ -95,7 +95,10 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        # 使用 try_shutdown 而非 shutdown：
+        # ros2 launch 收到 SIGINT 时 rclpy 已 shutdown 过一次 context，
+        # 再次 shutdown 会抛 RCLError("rcl_shutdown already called")。
+        rclpy.try_shutdown()
 
 
 if __name__ == '__main__':

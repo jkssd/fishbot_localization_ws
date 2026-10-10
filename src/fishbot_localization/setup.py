@@ -31,6 +31,7 @@ setup(
     entry_points={
         'console_scripts': [
             'path_recorder = fishbot_localization.path_recorder:main',
+            'navsat_rtk_driver = fishbot_localization.navsat_rtk_driver:main',
         ],
     },
 )

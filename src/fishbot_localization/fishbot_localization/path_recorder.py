@@ -6,9 +6,9 @@ path_recorder.py
 
 原理：
   - 订阅 TF 中的 map -> base_footprint 变换；
-  - 其中 map -> odom 由 AMCL（Navigation2 定位）提供，
-    odom -> base_footprint 由 robot_localization(EKF 融合 /odom + /imu) 提供；
-  - 因此这条轨迹 = EKF 里程计 + AMCL 全局定位 的融合结果（多算法）。
+  - 其中 map -> odom 由全局 EKF 提供（融合 /odom 速度 + /imu 航向 + /odometry/gps 绝对位置），
+    odom -> base_footprint 由局部 EKF 提供（融合 /odom + /imu）；
+  - 因此这条轨迹 = GNSS/RTK 全局定位 + EKF 里程计 的融合结果（多传感器）。
   - 发布到 /robot_trajectory，在 RViz2 中用 Path 显示查看。
 """
 import math
@@ -18,7 +18,6 @@ from rclpy.node import Node
 
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
-import tf2_ros
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
